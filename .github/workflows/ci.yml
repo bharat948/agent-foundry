@@ -1,0 +1,22 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install and test
+        if: hashFiles('package.json') != ''
+        run: |
+          npm ci
+          npm test
+      - name: Placeholder (no package.json yet)
+        if: hashFiles('package.json') == ''
+        run: echo "No package.json yet; CI placeholder passes."
