@@ -2,12 +2,15 @@
 
 Pinned Docker Compose stack for the Agent Foundry R0 runtime (TypeScript + PostgreSQL 17).
 
+Per ADR-0009. No Redis in R0.
+
 | Service | Image (pinned digest) | mem_limit | cpus |
 |---|---|---|---|
-| postgres | `postgres@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3` (postgres:17, 17.11) | 6g | 2 |
-| app (placeholder) | `node@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293` (node:20-alpine) | 2g | 2 |
+| db | `postgres@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3` (postgres:17, 17.11; shared_buffers=256MB, max_connections=20) | 2g | 2 |
+| runtime (placeholder) | `node@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1` (node:24-alpine; heap 768MB) | 1g | 2 |
+| gateway (placeholder) | same node:24 digest (heap 192MB) | 256m | 1 |
 
-Total memory cap: **8g** (swap disabled via `memswap_limit`). The `app` service is a placeholder HTTP server until AF-005 lands.
+Total cap 3.25g (<= 8g); `memswap_limit` = `mem_limit`, no GPU. runtime/gateway are placeholder HTTP servers until AF-005. start.sh logs `free -m` and flags <3 GB free as an environment note.
 
 ## Start / restart (also after a box reboot)
 ```bash

@@ -13,6 +13,9 @@ fi
 
 [ -f .env ] || { echo "deploy/.env missing: cp .env.example .env and set POSTGRES_PASSWORD"; exit 1; }
 
+free_mb=$(free -m | awk '/^Mem:/{print $7}')
+echo "host available memory: ${free_mb} MB"
+[ "$free_mb" -lt 3072 ] && echo "ENV NOTE (ADR-0009): <3 GB free; record as environment note, not a pass"
 $DOCKER compose up -d
 
 echo "waiting for services to be healthy..."
