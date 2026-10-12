@@ -13,6 +13,10 @@ fi
 
 [ -f .env ] || { echo "deploy/.env missing: cp .env.example .env and set POSTGRES_PASSWORD"; exit 1; }
 
+for k in POSTGRES_PASSWORD AF_RUNTIME_PASSWORD AF_GATEWAY_PASSWORD; do
+  v=$(grep -E "^${k}=" .env | tail -1 | cut -d= -f2- | tr -d '"'"'"' \r' || true)
+  if [ -z "$v" ] || [ "$v" = "change-me" ]; then echo "refusing to start: $k in deploy/.env is empty or 'change-me'"; exit 1; fi
+done
 free_mb=$(free -m | awk '/^Mem:/{print $7}')
 echo "host available memory: ${free_mb} MB"
 [ "$free_mb" -lt 3072 ] && echo "ENV NOTE (ADR-0009): <3 GB free; record as environment note, not a pass"
