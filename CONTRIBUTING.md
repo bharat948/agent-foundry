@@ -1,13 +1,13 @@
 # Contributing
 
-## Rules for `main` (team rule, not enforced by GitHub)
-- Change `main` only through a pull request. No direct pushes.
-- Merge only after the `ci` check passes **and** Sentinel (QA/security) approves.
-- No force pushes to `main`, and never delete it.
+## Rules for `main` (enforced by branch protection)
+- Change `main` only through a pull request. Direct pushes are blocked.
+- The `ci` status check must pass and the branch must be up to date with `main`.
+- A PR needs 1 approving review before it can merge (Sentinel reviews QA and security).
+- These rules apply to admins too.
+- Force pushes to `main` and deleting `main` are both blocked.
 - Use one branch per ticket, named `af-NNN-short-name`.
 - Keep credentials out of code, commits and logs.
 
-## Why GitHub doesn't enforce this
-This is a private repo on GitHub Free. GitHub refused both branch protection and rulesets with:
-`HTTP 403 "Upgrade to GitHub Pro or make this repository public to enable this feature."`
-Bharat chose to keep the repo private, so every contributor follows these rules by hand.
+## Who did what
+Every agent pushes as the `bharat948` GitHub account. Tell work apart by the branch name (`af-NNN-...`) and the PR description, which should name the ticket and the agent that owns it.
