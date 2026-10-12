@@ -8,9 +8,12 @@ Per ADR-0009. No Redis in R0.
 |---|---|---|---|
 | db | `postgres@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3` (postgres:17, 17.11; shared_buffers=256MB, max_connections=20) | 2g | 2 |
 | runtime (placeholder) | `node@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1` (node:24-alpine; heap 768MB) | 1g | 2 |
-| gateway (placeholder) | same node:24 digest (heap 192MB) | 256m | 1 |
+| gateway (placeholder, no host port) | same node:24 digest (heap 192MB) | 256m | 1 |
 
 Total cap 3.25g (<= 8g); `memswap_limit` = `mem_limit`, no GPU. runtime/gateway are placeholder HTTP servers until AF-005. start.sh logs `free -m` and flags <3 GB free as an environment note.
+
+## DB roles (ADR-0003)
+`deploy/initdb/01-roles.sh` runs on first init of an empty volume and creates `af_runtime` (CRUD via default privileges, not a superuser) and `af_gateway` (no privileges yet). runtime connects as af_runtime, gateway as af_gateway. The audit_log schema isn't defined yet, so the AF-005 migration must `GRANT INSERT ON audit_log TO af_gateway` and revoke write access on it from af_runtime. Passwords come from `.env`. start.sh refuses to start if any of them is empty or `change-me`. The gateway has no host port and is reachable only on the compose network.
 
 ## Start / restart (also after a box reboot)
 ```bash
